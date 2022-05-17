@@ -1,13 +1,19 @@
 package it.polito.tdp.rivers.model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import it.polito.tdp.rivers.db.RiversDAO;
 
 public class River {
 	private int id;
 	private String name;
 	private double flowAvg;
 	private List<Flow> flows;
+	private LocalDate first;
+	private LocalDate last;
+	private int n;
 	
 	public River(int id) {
 		this.id = id;
@@ -47,9 +53,35 @@ public class River {
 	}
 
 	public List<Flow> getFlows() {
-		if (flows == null)
-			flows = new ArrayList<Flow>();
+		if (flows == null) {
+			RiversDAO dao = new RiversDAO();
+			flows = new ArrayList<Flow>(dao.getAllFlowsOf(this));
+		}
 		return flows;
+	}
+	
+	public LocalDate getFirst() {
+		return first;
+	}
+
+	public void setFirst(LocalDate first) {
+		this.first = first;
+	}
+
+	public LocalDate getLast() {
+		return last;
+	}
+
+	public void setLast(LocalDate last) {
+		this.last = last;
+	}
+	
+	public int getN() {
+		return n;
+	}
+
+	public void setN(int n) {
+		this.n = n;
 	}
 
 	@Override

@@ -8,6 +8,9 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.rivers.model.Model;
+import it.polito.tdp.rivers.model.River;
+import it.polito.tdp.rivers.model.Simulator;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -25,7 +28,7 @@ public class FXMLController {
     private URL location;
 
     @FXML // fx:id="boxRiver"
-    private ComboBox<?> boxRiver; // Value injected by FXMLLoader
+    private ComboBox<River> boxRiver; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtStartDate"
     private TextField txtStartDate; // Value injected by FXMLLoader
@@ -47,6 +50,49 @@ public class FXMLController {
 
     @FXML // fx:id="txtResult"
     private TextArea txtResult; // Value injected by FXMLLoader
+    
+    @FXML
+    void handleSelectedRiver(ActionEvent event) {
+    	this.txtResult.clear();
+    	
+    	River r = this.boxRiver.getValue();
+    	if(r!=null) {
+    		this.model.calculateParameters(r);
+    		this.txtEndDate.setText(r.getLast().toString());
+    		this.txtFMed.setText(r.getFlowAvg()+"");
+    		this.txtNumMeasurements.setText(r.getN()+"");
+    		this.txtStartDate.setText(r.getFirst().toString());
+    		return;
+    	} else {	
+    		this.txtResult.setText("Errore imprevisto, il fiume selezionato non è al momento presente");
+    	}
+    }
+    
+    @FXML
+    void doSimulate(ActionEvent event) {
+    	this.txtResult.clear();
+
+    	River r = this.boxRiver.getValue();
+    	Double k = null;
+    	try {
+    		k = Double.parseDouble(this.txtK.getText());
+    	} catch(NumberFormatException e) {
+    		e.printStackTrace();
+    		this.txtResult.setText("Inserisci un valore di k valido!");
+    		return;
+    	}
+    	if(r!=null && k!=null) {
+
+    		Simulator s = new Simulator();
+    		s.initialize(r, k);
+    		s.run();
+  
+    		System.out.println("Fail days: " + s.getFail_days() + "\n"
+    				+ "C_med: " + s.getC_med());
+    	}
+    	return;
+    }
+    
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
     void initialize() {
@@ -62,5 +108,6 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	this.boxRiver.getItems().addAll(model.getAllRivers());
     }
 }
