@@ -81,15 +81,19 @@ public class FXMLController {
     		this.txtResult.setText("Inserisci un valore di k valido!");
     		return;
     	}
-    	if(r!=null && k!=null) {
+    	if(r!=null && k!=null && k>0) {
 
     		Simulator s = new Simulator();
     		s.initialize(r, k);
     		s.run();
   
-    		System.out.println("Fail days: " + s.getFail_days() + "\n"
+    		txtResult.appendText("Fail days: " + s.getFail_days() + "\n"
     				+ "C_med: " + s.getC_med());
     	}
+    	else {
+    		txtResult.setText("i valori inseriti non sono validi!");
+    	}
+    		
     	return;
     }
     

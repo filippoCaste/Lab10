@@ -48,10 +48,10 @@ public class Simulator {
 	public void run() {
 		while(!this.queue.isEmpty()) { // non ci sono altri elementi che fanno concludere la simulazione se non l'esaurimento dei flussi
 			Event e = this.queue.poll();
-//			System.out.println(e);
+			//System.out.println(e);
 			processEvent(e);
 		}
-		this.C_med = this.C_med/river.getN();
+		this.C_med = this.C_med/river.getFlows().size();
 	}
 
 	private void processEvent(Event e) {
@@ -64,8 +64,10 @@ public class Simulator {
 		if((capienza + f_in - f_out) > this.Q) {
 			f_out += Q-capienza-f_in; //scarico l'eventuale flusso in eccesso
 		}
-		if(this.capienza + f_in - f_out < 0) {
+		if((this.capienza + f_in - f_out) < 0) {
 			this.fail_days++;
+			this.capienza += f_in;
+			this.C_med += this.capienza;
 		} else {
 			this.capienza += f_in - f_out;
 			this.C_med += this.capienza;
